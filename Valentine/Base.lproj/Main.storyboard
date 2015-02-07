@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="Valentine" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS" customClass="GradientView" customModule="Valentine" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Violets are blue" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aaD-hO-H1A">
+                                <rect key="frame" x="202" y="252" width="196" height="35.5"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swift totally rules" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w3R-x4-bZj">
+                                <rect key="frame" x="191" y="312" width="216.5" height="35.5"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Roses are red" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vYf-cu-YNi">
+                                <rect key="frame" x="210" y="187" width="180" height="35.5"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="and so do you!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fMB-PV-dcx">
+                                <rect key="frame" x="203" y="378" width="193" height="35.5"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.77117598679999999" green="0.18413342930000001" blue="0.45024671049999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="centerY" secondItem="aaD-hO-H1A" secondAttribute="centerY" constant="30" id="0Lx-P8-sWo"/>
+                            <constraint firstAttribute="centerX" secondItem="fMB-PV-dcx" secondAttribute="centerX" id="1DH-mS-FM8"/>
+                            <constraint firstAttribute="centerY" secondItem="w3R-x4-bZj" secondAttribute="centerY" constant="-30" id="3oJ-vK-o5B"/>
+                            <constraint firstAttribute="centerX" secondItem="vYf-cu-YNi" secondAttribute="centerX" id="Sq9-Qi-Vww"/>
+                            <constraint firstItem="aaD-hO-H1A" firstAttribute="top" secondItem="vYf-cu-YNi" secondAttribute="bottom" constant="30" id="VGC-yF-ynr"/>
+                            <constraint firstAttribute="centerX" secondItem="w3R-x4-bZj" secondAttribute="centerX" id="n46-JO-4hW"/>
+                            <constraint firstItem="fMB-PV-dcx" firstAttribute="top" secondItem="w3R-x4-bZj" secondAttribute="bottom" constant="30" id="olL-YK-0jb"/>
+                            <constraint firstAttribute="centerX" secondItem="aaD-hO-H1A" secondAttribute="centerX" id="uWF-bC-inl"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="fromColor">
+                                <color key="value" red="0.91670949840000004" green="0.40614720389999998" blue="0.69248560859999997" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="toColor">
+                                <color key="value" red="0.77117598679999999" green="0.18413342930000001" blue="0.45024671049999998" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <connections>
+                        <outletCollection property="textLabels" destination="vYf-cu-YNi" collectionClass="NSMutableArray" id="5Ew-8c-jfJ"/>
+                        <outletCollection property="textLabels" destination="aaD-hO-H1A" collectionClass="NSMutableArray" id="33y-Hc-GjW"/>
+                        <outletCollection property="textLabels" destination="w3R-x4-bZj" collectionClass="NSMutableArray" id="uRu-fL-9ew"/>
+                        <outletCollection property="textLabels" destination="fMB-PV-dcx" collectionClass="NSMutableArray" id="DjW-n4-gAt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+</document>
