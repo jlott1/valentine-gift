@@ -58,11 +58,11 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
     
     // MARK: - Speech Synthesizer Delegate
     
-    func speechSynthesizer(synthesizer: AVSpeechSynthesizer!, didFinishSpeechUtterance utterance: AVSpeechUtterance!) {
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer!, didFinish utterance: AVSpeechUtterance!) {
         
         // IMPORTANT: If this method isn't getting hit (and your poem only presents the first line) make sure you are using an iOS 7 simulator. As of the time of this comment the iOS 8 simulators do not support speech synthesis
         
-        currentLine++
+        currentLine += 1
         
         if currentLine < textLabels.count {
             showLabel(textLabels[currentLine])
@@ -78,26 +78,26 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
         }
     }
     
-    func showLabel(label: UILabel) {
+    func showLabel(_ label: UILabel) {
         
         speakLabelText(label)
         
-        label.transform = CGAffineTransformMakeTranslation(0, 50)
+        label.transform = CGAffineTransform(translationX: 0, y: 50)
         
-        UIView.animateWithDuration(1.0, animations: { () -> Void in
+        UIView.animate(withDuration: 1.0, animations: { () -> Void in
             
             label.alpha = 1.0
-            label.transform = CGAffineTransformIdentity
+            label.transform = CGAffineTransform.identity
             
         })
         
     }
     
-    func speakLabelText(label: UILabel) {
-        let utterance = AVSpeechUtterance(string: label.text)
+    func speakLabelText(_ label: UILabel) {
+        let utterance = AVSpeechUtterance(string: label.text!)
         utterance.rate = 0.2
         
-        synthesizer?.speakUtterance(utterance)
+        synthesizer?.speak(utterance)
     }
 }
 

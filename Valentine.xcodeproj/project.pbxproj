@@ -164,9 +164,11 @@
 				TargetAttributes = {
 					A8A1FE4D1A7D8A9200ABED45 = {
 						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 0920;
 					};
 					A8A1FE621A7D8A9200ABED45 = {
 						CreatedOnToolsVersion = 6.1.1;
+						LastSwiftMigration = 0920;
 						TestTargetID = A8A1FE4D1A7D8A9200ABED45;
 					};
 				};
@@ -344,6 +346,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -355,6 +359,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -373,6 +379,8 @@
 				INFOPLIST_FILE = ValentineTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Valentine.app/Valentine";
 			};
 			name = Debug;
@@ -388,6 +396,8 @@
 				INFOPLIST_FILE = ValentineTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Valentine.app/Valentine";
 			};
 			name = Release;
