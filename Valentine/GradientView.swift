@@ -28,21 +28,21 @@ import UIKit
 /// Gradient view inspired by post at http://www.thinkandbuild.it/building-custom-ui-element-with-ibdesignable/
 @IBDesignable class GradientView: UIView {
     
-    @IBInspectable var fromColor: UIColor = UIColor.darkGrayColor() {
+    @IBInspectable var fromColor: UIColor = UIColor.darkGray {
         didSet {
             setupView()
         }
     }
     
-    @IBInspectable var toColor: UIColor = UIColor.blackColor() {
+    @IBInspectable var toColor: UIColor = UIColor.black {
         didSet {
             setupView()
         }
     }
     
     // Setup the view appearance
-    private func setupView(){
-        let colors: Array = [fromColor.CGColor, toColor.CGColor]
+    fileprivate func setupView(){
+        let colors: Array = [fromColor.cgColor, toColor.cgColor]
         
         gradientLayer.colors = colors
         
@@ -53,10 +53,10 @@ import UIKit
     
     // Helper to return the main layer as CAGradientLayer
     var gradientLayer: CAGradientLayer {
-        return layer as CAGradientLayer
+        return layer as! CAGradientLayer
     }
     
-    override class func layerClass() -> AnyClass {
+    override class var layerClass : AnyClass {
         return CAGradientLayer.self
     }
     
@@ -67,7 +67,7 @@ import UIKit
     }
     
     required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        super.init(coder: aDecoder)!
         
         setupView()
     }
