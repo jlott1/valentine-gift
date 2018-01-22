@@ -110,9 +110,7 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
             
             var previousTimestamp : TimeInterval = 0
             var previousSegment: SFTranscriptionSegment? = nil
-            var phraseWords : String = ""
             var phrases: [Phrase] = []
-            var phraseDelay : TimeInterval = 0
             var phrase : Phrase = Phrase()
             
             segments.forEach({
@@ -149,51 +147,7 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
                 previousTimestamp = $0.timestamp
                 previousSegment = $0
             })
-            
-//            segments.forEach({
-//                let delay = $0.timestamp - previousTimestamp
-//                print("delay (\(delay)) between '\(previousSegment?.substring ?? "")' and '\($0.substring)'")
-//                if delay > Phrase.kThresholdDelay {
-//                    if segments.last == $0 {
-//                        phraseWords = phraseWords + (phraseWords.count > 0 ? " " : "") + $0.substring
-//                    }
-//                    // start a new phrase
-//                    if phraseWords.count > 0 {
-//                        phraseDelay = delay//$0.timestamp - phraseDelay
-//                        let phrase = Phrase(words: phraseWords, delay: phraseDelay)
-//                        phrases.append(phrase)
-//                        print("new phrase is '\(phrase.words)' with delay (\(phrase.delay))")
-//                    }
-//
-//                    // reset phrase words
-//                    phraseWords = $0.substring
-//                }
-//                else if segments.last == $0 {
-//                    phraseWords = phraseWords + (phraseWords.count > 0 ? " " : "") + $0.substring
-//                    // start a new phrase
-//                    if phraseWords.count > 0 {
-//                        phraseDelay = delay//$0.timestamp - phraseDelay
-//                        let phrase = Phrase(words: phraseWords, delay: phraseDelay)
-//                        phrases.append(phrase)
-//                        print("new phrase is '\(phrase.words)' with delay (\(phrase.delay))")
-//                    }
-//                }
-//                else {
-////                    print("no delay \(diff)")//print("delay (\(diff)) between \(previousSegment) and \($0)")
-//                    phraseWords = phraseWords + (phraseWords.count > 0 ? " " : "") + $0.substring
-//                }
-//                print("words = '\(phraseWords)'")
-//                previousTimestamp = $0.timestamp
-//                previousSegment = $0
-//            })
-            
-            // speak segments by mapping segments to utterances
-//            let utterances = segments.map({ (segment) -> AVSpeechUtterance in
-//                let utterance = AVSpeechUtterance(string: segment.substring)
-//                utterance.rate = 0.3
-//                utterance.preUtteranceDelay = segment.timestamp
-//                return utterance
-//            })
+        
 
             let utterances = phrases.map({ (phrase) -> AVSpeechUtterance in
                 let utterance = AVSpeechUtterance(string: phrase.words)
@@ -270,7 +224,7 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
     func newLabelWithText(text: String) -> UILabel {
         let label = UILabel()
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 30, weight: UIFontWeightThin )
+        label.font = UIFont.systemFont(ofSize: 30, weight: UIFont.Weight.thin )
         label.text = text
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -372,10 +326,8 @@ extension ViewController : SFSpeechRecognizerDelegate {
         }
         
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()  //3
-        
-        guard let inputNode = audioEngine.inputNode else {
-            fatalError("Audio engine has no input node")
-        }  //4
+        let inputNode = audioEngine.inputNode
+         //4
         
         guard let recognitionRequest = recognitionRequest else {
             fatalError("Unable to create an SFSpeechAudioBufferRecognitionRequest object")
@@ -384,7 +336,6 @@ extension ViewController : SFSpeechRecognizerDelegate {
         recognitionRequest.shouldReportPartialResults = true  //6
         var date = Date()
         var delays: [TimeInterval] = [];
-        var phrases: [Phrase] = [];
         var words = [String]()
         
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in  //7
@@ -392,23 +343,12 @@ extension ViewController : SFSpeechRecognizerDelegate {
             var isFinal = false  //8
             
             if result != nil {
-                let wordsLength = words.count
                 
                 let delay = Date().timeIntervalSince(date)
                 date = Date()
-                print("delay = \(delay), isFinal = \(result?.isFinal)")
+//                print("delay = \(delay), isFinal = \(String(describing: result?.isFinal))")
                 delays.append(delay)
-                
-//                if delay > Phrase.kThresholdDelay && wordsLength > 0 {
-//                    var phrase = Phrase()
-//                    phrase.words.append(contentsOf: words)
-//                    phrases.append(phrase)
-//                    words.removeAll()
-//                    print("new phrase words \(phrase.words)")
-//                }
-//
                 if let word = result?.bestTranscription.segments.last?.substring, (words.last == nil || word != words.last) {
-                    //                    print("segments: \(result?.bestTranscription.segments)")
                     words.append(word)
                 }
                 
@@ -425,24 +365,7 @@ extension ViewController : SFSpeechRecognizerDelegate {
                 
                 self.microphoneButton.isEnabled = true
                 
-                print("segment times = \((result?.bestTranscription.segments as? NSArray)?.value(forKey: "timestamp"))")
-                
-                var previousTimestamp : TimeInterval = 0
-                var previousSegment: SFTranscriptionSegment? = nil
-                var phraseWords : [String] = []
-//                if let segments = result?.bestTranscription.segments {
-//                    segments.forEach({
-//                        let diff = $0.timestamp - previousTimestamp
-//                        if diff > Phrase.kThresholdDelay {
-//                            print("delay (\(diff)) between \(previousSegment?.substring ?? "") and \($0.substring)")
-//                        }
-//                        else {
-//                            print("no delay \(diff)")//print("delay (\(diff)) between \(previousSegment) and \($0)")
-//                        }
-//                        previousTimestamp = $0.timestamp
-//                        previousSegment = $0
-//                    })
-//                }
+//                print("segment times = \((result?.bestTranscription.segments as? NSArray)?.value(forKey: "timestamp"))")
                 
                 self.transcription = result?.bestTranscription
                 self.finishedTranscribing()
