@@ -26,13 +26,8 @@ import UIKit
 import AVFoundation
 import Speech
 import QuartzCore
+import ReplayKit
 
-class Phrase {
-    static let kThresholdDelay = 1.0
-    var words: String = ""
-    var delay: TimeInterval = 0
-    init() {}
-}
 
 class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
 
@@ -65,11 +60,16 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
     fileprivate var transcription: SFTranscription?
     var utterances: [AVSpeechUtterance] = []
     
-    @IBOutlet var creditsLabel: UILabel!
     // Magic !!!
     var fireworks: [Fireworks] = []
     var music: SoundPlayer = SoundPlayer()
     var selectedTrackId = iTunesTrackIDs.JonathanMyBride
+    @IBOutlet var creditsLabel: UILabel!
+
+    // Replay Kit
+    let recorder = RPScreenRecorder.shared()
+    private var isRecordingScreen = false
+
     
     // MARK: - UIViewController
     
@@ -84,6 +84,7 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
         synthesizer?.delegate = self
         
         setupSpeechRecognizer()
+        let _ = recorder.isAvailable 
     }
 
     override func didReceiveMemoryWarning() {
@@ -106,6 +107,29 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
     }
     
     func startSpeechReplay() {
+        
+        let audioSession = AVAudioSession.sharedInstance()  //2
+        do {
+            try audioSession.setCategory(AVAudioSessionCategoryAmbient, with: AVAudioSessionCategoryOptions.defaultToSpeaker)
+            try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+        } catch {
+            print("audioSession properties weren't set because of an error.")
+        }
+        
+        
+        if recorder.isAvailable {
+            recorder.startRecording { [unowned self] (error) in
+                
+                guard error == nil else {
+                    print("There was an error starting the recording.")
+                    return
+                }
+                
+                print("Started Recording Screen Successfully")
+                self.isRecordingScreen = true
+            }
+        }
+        
         if let segments = transcription?.segments, segments.count > 0 {
             
             var previousTimestamp : TimeInterval = 0
@@ -190,9 +214,8 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
     }
     
     func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        
-        
     }
+    
     @IBAction func chooseSongButtonTapped(_ sender: Any) {
         let alert = UIAlertController(title: "Choose A Song", message: "This song will play during playback of your speech.", preferredStyle: UIAlertControllerStyle.actionSheet)
         for option in iTunesTrackIDs.allValues {
@@ -215,10 +238,19 @@ class ViewController: UIViewController, AVSpeechSynthesizerDelegate {
         
         resetButton.isHidden = true
         chooseSongButton.isHidden = false
-        
+        creditsLabel.isHidden = true
+
         destroyFireworks()
         music.stopSound()
+        stopRecording()
     }
+    
+    @IBAction func recordButtonTapped() {
+        stopRecording()
+        //let's reset too
+        resetButtonTapped(resetButton)
+    }
+    
     // MARK: - Private methods
 
     func newLabelWithText(text: String) -> UILabel {
@@ -318,7 +350,7 @@ extension ViewController : SFSpeechRecognizerDelegate {
         
         let audioSession = AVAudioSession.sharedInstance()  //2
         do {
-            try audioSession.setCategory(AVAudioSessionCategoryRecord)
+            try audioSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: AVAudioSessionCategoryOptions.defaultToSpeaker)
             try audioSession.setMode(AVAudioSessionModeMeasurement)
             try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
         } catch {
@@ -398,151 +430,7 @@ extension ViewController : SFSpeechRecognizerDelegate {
     }
 }
 
-struct Fireworks {
-    var rootLayer:CALayer = CALayer()
-    var emitterLayer:CAEmitterLayer = CAEmitterLayer()
-    var mortor:CAEmitterLayer = CAEmitterLayer()
-    var soundPlayer = SoundPlayer()
-    init() {}
-    
-    // https://stackoverflow.com/questions/19274789/how-can-i-change-image-tintcolor-in-ios-and-watchkit
-    func image(with image: UIImage!, color1: UIColor) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
-        let context: CGContext = UIGraphicsGetCurrentContext()!
-        context.translateBy(x: 0, y: image.size.height)
-        context.scaleBy(x: 1.0, y: -1.0)
-        context.setBlendMode(.normal)
-        let rect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
-        context.clip(to: rect, mask: image.cgImage!)
-        color1.setFill()
-        context.fill(rect)
-        let newImage: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return newImage
-    }
-    
-    /*
-     Combination of these two references
-     https://developer.apple.com/library/content/samplecode/Fireworks/Introduction/Intro.html#//apple_ref/doc/uid/DTS40009114
-     http://www.knowstack.com/swift-caemittercell-caemitterlayer-fireworks/
-     https://github.com/tapwork/iOS-Particle-Fireworks
-     with a little help from here
-     https://stackoverflow.com/questions/4706272/tips-on-writing-a-calayer-subclass-for-both-mac-and-ios/4706397
-     */
-    func createFireworks(in view: UIView) {
-        //Create the root layer
-//        rootLayer = CALayer()
-        //Set the root layer's attributes
-        rootLayer.bounds = view.bounds;
-        var color: CGColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0).cgColor
-        rootLayer.backgroundColor = color
-        //Load the spark image for the particle
-        let image = UIImage(named: "tspark")
-//        let newImage = image!.withRenderingMode(.alwaysTemplate)
-        let coloredImage = self.image(with: image, color1:  view.backgroundColor ?? .white)
-        
-        let img = coloredImage?.cgImage
-//        mortor = CAEmitterLayer()
-        mortor.emitterPosition = CGPoint(x: 320, y: -200)
-        mortor.renderMode = kCAEmitterLayerAdditive
-        //Invisible particle representing the rocket before the explosion
-        let rocket = CAEmitterCell()
-        rocket.emissionLongitude = .pi / 2
-        rocket.emissionLatitude = 0
-        rocket.lifetime = 1.6
-        rocket.birthRate = 1
-        rocket.velocity = 400
-        rocket.velocityRange = 100
-        rocket.yAcceleration = -200
-        rocket.emissionRange = .pi / 4
-        color = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5).cgColor
-        rocket.color = color
-        rocket.redRange = 0.5
-        rocket.greenRange = 0.5
-        rocket.blueRange = 0.5
-        //Name the cell so that it can be animated later using keypath
-        rocket.name = "rocket"
-        //Flare particles emitted from the rocket as it flys
-        let flare = CAEmitterCell()
-        flare.contents = img
-        flare.emissionLongitude = (4 * .pi) / 2
-        flare.scale = 0.4
-        flare.velocity = 100
-        flare.birthRate = 45
-        flare.lifetime = 1.5
-        flare.yAcceleration = -350
-        flare.emissionRange = .pi / 7
-        flare.alphaSpeed = -0.7
-        flare.scaleSpeed = -0.1
-        flare.scaleRange = 0.1
-        flare.beginTime = 0.01
-        flare.duration = 0.7
-        //The particles that make up the explosion
-        let firework = CAEmitterCell()
-        firework.contents = img
-        firework.birthRate = 9999
-        firework.scale = 0.6
-        firework.velocity = 130
-        firework.lifetime = 2
-        firework.alphaSpeed = -0.2
-        firework.yAcceleration = -80
-        firework.beginTime = 1.5
-        firework.duration = 0.1
-        firework.emissionRange = 2 * .pi
-        firework.scaleSpeed = -0.1
-        firework.spin = 2
-        //Name the cell so that it can be animated later using keypath
-        firework.name = "firework"
-        //preSpark is an invisible particle used to later emit the spark
-        let preSpark = CAEmitterCell()
-        preSpark.birthRate = 80
-        preSpark.velocity = firework.velocity * 0.70
-        preSpark.lifetime = 1.7
-        preSpark.yAcceleration = firework.yAcceleration * 0.85
-        preSpark.beginTime = (firework.beginTime - 0.2)
-        preSpark.emissionRange = firework.emissionRange
-        preSpark.greenSpeed = 100
-        preSpark.blueSpeed = 100
-        preSpark.redSpeed = 100
-        //Name the cell so that it can be animated later using keypath
-        preSpark.name = "preSpark"
-        //The 'sparkle' at the end of a firework
-        let spark = CAEmitterCell()
-        spark.contents = img
-        spark.lifetime = 0.05
-        spark.yAcceleration = -250
-        spark.beginTime = 0.8
-        spark.scale = 0.4
-        spark.birthRate = 10
-        preSpark.emitterCells = [spark]
-        rocket.emitterCells = [flare, firework, preSpark]
-        mortor.emitterCells = [rocket]
-        
-        //slow it down for effect
-        mortor.speed = 0.9
-        
-        //flip rootLayer
-        rootLayer.sublayerTransform = CATransform3DMakeScale(1.0, -1.0, 1.0);
-        
-        rootLayer.addSublayer(mortor)
-        
-        //Set the view's layer to the base layer
-        view.layer.insertSublayer(rootLayer, at: 0)
-        
-        //Force the view to update
-        view.setNeedsDisplay()
-        
-        let randomDelay = Int(arc4random_uniform(2))
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(randomDelay)) {
-            self.soundPlayer.playSound(withName: "Fireworks-Sounds.m4v")
-        }
-    }
-    
-    func destroyFireworks() {
-        rootLayer.removeFromSuperlayer()
-        soundPlayer.stopSound()
-    }
-}
+
 
 /*Enables you to throw a string*/
 extension String: Error {}
@@ -613,109 +501,6 @@ enum iTunesTrackIDs : String {
     }
 }
 
-// Now we should try recording the audio and playing it back with text
-class SoundPlayer {
-    var audioPlayer: AVAudioPlayer?
-    var itunesResults: iTunesSearchResults?
-    
-    struct iTunesSearchResults : Codable {
-        var resultCount: Int?
-        var results: [iTunesSearchResultItem]?
-        func trackPreviewURL() -> URL? {
-            if let item = results?.first,
-            let urlStr = item.previewUrl,
-            let url = URL(string: urlStr) {
-                return url
-            }
-            return nil
-        }
-        
-        func trackDescription() -> String {
-            if let item = results?.first,
-                let artist = item.artistName,
-                let track = item.trackName {
-                return "\(track)\nby \(artist)"
-            }
-            return "Unknown"
-        }
-    }
-    
-    struct iTunesSearchResultItem : Codable {
-        var previewUrl: String?
-        var artistName: String?
-        var trackName: String?
-        var trackId: Int?
-    }
-    
-    // song previews: https://affiliate.itunes.apple.com/resources/blog/song-previews/
-    // sample url:  http://itunes.apple.com/us/lookup?id=823593456
-    // BEST SINGLE EVER!!!!  https://itunes.apple.com/us/album/my-bride-wedding-song/1212743580?i=1212743725
-    func playiTunesSongPreview(withId id: String = "1212743725", volume: Float = 0.2, completion: ((iTunesSearchResults?, Error?) -> Void)? = nil) {
-        do {
-            if let itunesResults = itunesResults, let url = itunesResults.trackPreviewURL() {
-                playSound(withURL: url, volume: volume)
-                completion?(itunesResults, nil)
-                return
-            }
-            
-            let jsonStr = try String(contentsOf: URL(string: "http://itunes.apple.com/us/lookup?id=\(id)")!)
-            print("got json = \(jsonStr)")
-            let data = jsonStr.data(using: .utf8)!
-            let object = try JSONDecoder().decode(iTunesSearchResults.self, from: data)
-            if let url = object.trackPreviewURL() {
-                itunesResults = object
-                print("playing track at url \(url)")
-                playSound(withURL: url, volume: volume)
-                completion?(itunesResults, nil)
-            } else {
-                throw "Cannot find track url"
-            }
-            
-        } catch {
-            print("error fetching details \(error.localizedDescription)")
-            completion?(nil, error)
-        }
-    }
-    
-    func playSound(withName fileName: String, volume: Float = 0.25) {
-        if let filePath: String = Bundle.main.path(forResource: fileName, ofType: "") {
-            print("playing sound from path \(filePath)")
-            playSound(withURL: URL(fileURLWithPath: filePath), volume: volume)
-        }
-    }
-    
-    func playSound(withURL fileURL: URL, volume: Float = 0.25) {
-        do {
-            if fileURL.isFileURL {
-                let player = try AVAudioPlayer(contentsOf: fileURL)
-                player.prepareToPlay()
-                player.volume = volume
-                player.play()
-                player.numberOfLoops = -1
-                audioPlayer = player
-            }
-            else {
-                let data = try Data(contentsOf: fileURL)
-                let player = try AVAudioPlayer(data: data)
-                player.prepareToPlay()
-                player.volume = volume
-                player.play()
-                player.numberOfLoops = -1
-                audioPlayer = player
-            }
-            
-        }
-        catch {
-            print("error playing file \(error.localizedDescription)")
-        }
-    }
-    
-    func stopSound() {
-        audioPlayer?.stop()
-    }
-    
-}
-
 extension ViewController {
     func createFireworks() {
         fireworks.append(contentsOf: [Fireworks(), Fireworks()])
@@ -728,102 +513,40 @@ extension ViewController {
     }
 }
 
-extension ViewController {
-    //https://stackoverflow.com/questions/39238180/record-audio-with-added-effects
-    //https://stackoverflow.com/questions/34537066/tap-installed-on-audio-engine-only-producing-short-files/34561042#34561042
-//    func funAudioEngineStuff() {
-//        func playAudio(pitch : Float, rate: Float, reverb: Float, echo: Float) {
-//            // Initialize variables
-//            audioEngine = AVAudioEngine()
-//            audioPlayerNode = AVAudioPlayerNode()
-//            audioEngine.attachNode(audioPlayerNode)
-//
-//            // Setting the pitch
-//            let pitchEffect = AVAudioUnitTimePitch()
-//            pitchEffect.pitch = pitch
-//            audioEngine.attachNode(pitchEffect)
-//
-//            // Setting the platback-rate
-//            let playbackRateEffect = AVAudioUnitVarispeed()
-//            playbackRateEffect.rate = rate
-//            audioEngine.attachNode(playbackRateEffect)
-//
-//            // Setting the reverb effect
-//            let reverbEffect = AVAudioUnitReverb()
-//            reverbEffect.loadFactoryPreset(AVAudioUnitReverbPreset.Cathedral)
-//            reverbEffect.wetDryMix = reverb
-//            audioEngine.attachNode(reverbEffect)
-//
-//            // Setting the echo effect on a specific interval
-//            let echoEffect = AVAudioUnitDelay()
-//            echoEffect.delayTime = NSTimeInterval(echo)
-//            audioEngine.attachNode(echoEffect)
-//
-//            // Chain all these up, ending with the output
-//            audioEngine.connect(audioPlayerNode, to: playbackRateEffect, format: nil)
-//            audioEngine.connect(playbackRateEffect, to: pitchEffect, format: nil)
-//            audioEngine.connect(pitchEffect, to: reverbEffect, format: nil)
-//            audioEngine.connect(reverbEffect, to: echoEffect, format: nil)
-//            audioEngine.connect(echoEffect, to: audioEngine.mainMixerNode, format: nil)
-//
-//
-//            // Good practice to stop before starting
-//            audioPlayerNode.stop()
-//
-//            // Play the audio file
-//            if(audioEngine != nil){
-//                audioEngine?.stop()
-//            }
-//
-//            audioPlayerNode.scheduleFile(audioFile, atTime: nil, completionHandler: {
-//                print("Complete")
-//
-//            })
-//
-//            try! audioEngine.start()
-//
-//
-//            let dirPaths: AnyObject = NSSearchPathForDirectoriesInDomains( NSSearchPathDirectory.DocumentDirectory,  NSSearchPathDomainMask.UserDomainMask, true)[0]
-//            let tmpFileUrl: NSURL = NSURL.fileURLWithPath(dirPaths.stringByAppendingPathComponent("dddeffefsdctedSoundf23f13.caf"))
-//            filteredOutputURL = tmpFileUrl
-//
-//            do{
-//                print(dirPaths)
-//                print(tmpFileUrl)
-//
-//                self.newAudio = try! AVAudioFile(forWriting: tmpFileUrl, settings:[
-//                    AVFormatIDKey: NSNumber(unsignedInt:kAudioFormatAppleLossless),
-//                    AVEncoderAudioQualityKey : AVAudioQuality.Medium.rawValue,
-//                    AVEncoderBitRateKey : 12800,
-//                    AVNumberOfChannelsKey: 2,
-//                    AVSampleRateKey : 44100.0
-//                    ])
-//
-//                audioEngine.mainMixerNode.installTapOnBus(0, bufferSize: 2048, format: audioEngine.mainMixerNode.inputFormatForBus(0)) {
-//                    (buffer: AVAudioPCMBuffer!, time: AVAudioTime!) -> Void in
-//
-//                    print(self.newAudio.length)
-//                    print("=====================")
-//                    print(self.audioFile.length)
-//                    print("**************************")
-//                    if (self.newAudio.length) < (self.audioFile.length){//Let us know when to stop saving the file, otherwise saving infinitely
-//
-//                        do{
-//                            //print(buffer)
-//                            try self.newAudio.writeFromBuffer(buffer)
-//                        }catch _{
-//                            print("Problem Writing Buffer")
-//                        }
-//                    }else{
-//                        self.audioEngine.mainMixerNode.removeTapOnBus(0)//if we dont remove it, will keep on tapping infinitely
-//
-//                    }
-//
-//                }
-//            }catch _{
-//                print("Problem")
-//            }
-//
-//            audioPlayerNode.play()
-//        }
+extension ViewController : RPPreviewViewControllerDelegate {
+    func stopRecording() {
+        
+        recorder.stopRecording { [unowned self] (preview, error) in
+            print("Stopped recording")
+            
+            guard preview != nil else {
+                print("Preview controller is not available.")
+                return
+            }
+            
+            let alert = UIAlertController(title: "Recording Finished", message: "Would you like to edit or delete your recording?", preferredStyle: .alert)
+            
+            let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
+                self.recorder.discardRecording(handler: { () -> Void in
+                    print("Recording suffessfully deleted.")
+                })
+            })
+            
+            let editAction = UIAlertAction(title: "Edit", style: .default, handler: { (action: UIAlertAction) -> Void in
+                preview?.previewControllerDelegate = self
+                self.present(preview!, animated: true, completion: nil)
+            })
+            
+            alert.addAction(editAction)
+            alert.addAction(deleteAction)
+            self.present(alert, animated: true, completion: nil)
+            
+            self.isRecordingScreen = false
+        }
+        
+    }
+    
+    func previewControllerDidFinish(_ previewController: RPPreviewViewController) {
+        dismiss(animated: true)
+    }
 }

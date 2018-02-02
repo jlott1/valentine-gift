@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		A49BB38620147B67005A222D /* Fireworks-Sounds.m4v in Resources */ = {isa = PBXBuildFile; fileRef = A49BB38520147B66005A222D /* Fireworks-Sounds.m4v */; };
+		A4BD758F2017F4F200811E69 /* Phrase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BD758E2017F4F200811E69 /* Phrase.swift */; };
+		A4BD75912017F53C00811E69 /* Fireworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BD75902017F53C00811E69 /* Fireworks.swift */; };
+		A4BD75942017FD1D00811E69 /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BD75922017FC2000811E69 /* SoundPlayer.swift */; };
 		A8A1FE541A7D8A9200ABED45 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A1FE531A7D8A9200ABED45 /* AppDelegate.swift */; };
 		A8A1FE561A7D8A9200ABED45 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A1FE551A7D8A9200ABED45 /* ViewController.swift */; };
 		A8A1FE591A7D8A9200ABED45 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8A1FE571A7D8A9200ABED45 /* Main.storyboard */; };
@@ -29,6 +32,9 @@
 
 /* Begin PBXFileReference section */
 		A49BB38520147B66005A222D /* Fireworks-Sounds.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Fireworks-Sounds.m4v"; sourceTree = "<group>"; };
+		A4BD758E2017F4F200811E69 /* Phrase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phrase.swift; sourceTree = "<group>"; };
+		A4BD75902017F53C00811E69 /* Fireworks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fireworks.swift; sourceTree = "<group>"; };
+		A4BD75922017FC2000811E69 /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
 		A8A1FE4E1A7D8A9200ABED45 /* Valentine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Valentine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8A1FE521A7D8A9200ABED45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A8A1FE531A7D8A9200ABED45 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +90,9 @@
 				A8A1FE531A7D8A9200ABED45 /* AppDelegate.swift */,
 				A8A1FE551A7D8A9200ABED45 /* ViewController.swift */,
 				A8A1FE731A7D8E2B00ABED45 /* GradientView.swift */,
+				A4BD758E2017F4F200811E69 /* Phrase.swift */,
+				A4BD75902017F53C00811E69 /* Fireworks.swift */,
+				A4BD75922017FC2000811E69 /* SoundPlayer.swift */,
 				A8A1FE571A7D8A9200ABED45 /* Main.storyboard */,
 				A8A1FE5A1A7D8A9200ABED45 /* Images.xcassets */,
 				A8A1FE5C1A7D8A9200ABED45 /* LaunchScreen.xib */,
@@ -167,6 +176,7 @@
 				TargetAttributes = {
 					A8A1FE4D1A7D8A9200ABED45 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = F9LFD5Q8W5;
 						LastSwiftMigration = 0920;
 					};
 					A8A1FE621A7D8A9200ABED45 = {
@@ -221,8 +231,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4BD75912017F53C00811E69 /* Fireworks.swift in Sources */,
 				A8A1FE561A7D8A9200ABED45 /* ViewController.swift in Sources */,
 				A8A1FE541A7D8A9200ABED45 /* AppDelegate.swift in Sources */,
+				A4BD758F2017F4F200811E69 /* Phrase.swift in Sources */,
+				A4BD75942017FD1D00811E69 /* SoundPlayer.swift in Sources */,
 				A8A1FE741A7D8E2B00ABED45 /* GradientView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -366,6 +379,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = F9LFD5Q8W5;
 				INFOPLIST_FILE = Valentine/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -380,6 +394,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = F9LFD5Q8W5;
 				INFOPLIST_FILE = Valentine/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
